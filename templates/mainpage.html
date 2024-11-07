@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Automated Essay Scoring</title>
+
+    <style>
+        @font-face {
+            font-family: 'Product Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/productsans/v5/HYvgU2fE2nRJvZ5JFAumwegdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
+        }
+
+        body {
+            font-family: 'Product Sans', sans-serif;
+            background-image: url('../static/images/back.jpg'); 
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover; 
+            padding: 20px; 
+        }
+
+        h1 {
+            font-size: 50px;
+            color: white;
+            text-align: center;
+        }
+
+        textarea {
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1); 
+            color: white;
+            border-radius: 30px;
+            outline: none;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+        }
+
+        h3 {
+            color: white;
+            text-align: center;
+        }
+
+        .input-group {
+            margin: 0 auto;
+            max-width: 600px; 
+        }
+
+        #submit-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50; 
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #submit-button:hover {
+            background-color: #45a049; 
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>AUTOMATED ESSAY</h1>
+    <h1>SCORING</h1>
+
+    <div class="input-group">
+        <textarea id="main" placeholder="Enter Essay Here" rows="11" cols="180"></textarea>
+    </div>
+
+    <button type="button" id="submit-button" onclick="senddata()">Score my Essay!</button>
+    
+    <h3 id="output"></h3>
+    
+    <script>
+        function senddata() {
+            var text = document.getElementById("main").value;
+            var output = document.getElementById("output");
+            const obj = { text: text };
+
+            fetch("http://127.0.0.1:5000/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(obj),
+            })
+            .then((response) => response.json())
+            .then((result) => {
+                if (!result || result.score === "0") {
+                    output.innerHTML = "Your grade is: 0/10";
+                } else {
+                    output.innerHTML = "Your grade is: " + result.score + "/10";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                output.innerHTML = "An error occurred. Please try again.";
+            });
+        }
+    </script>
+
+</body>
+</html>
